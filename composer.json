@@ -1,0 +1,23 @@
+{
+    "name": "visual-craft/utils",
+    "description": "A collection of useful PHP classes",
+    "type": "library",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Anton Bakai",
+            "email": "me@inso.im"
+        }
+    ],
+    "autoload": {
+        "psr-4" : {
+            "VisualCraft\\Utils\\" : "src"
+        }
+    },
+    "require": {
+        "php": ">=5.5.0"
+    },
+    "require-dev": {
+        "crysalead/kahlan": "^2.3"
+    }
+}
