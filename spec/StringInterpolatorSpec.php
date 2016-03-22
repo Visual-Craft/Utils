@@ -11,6 +11,8 @@ describe("StringInterpolator", function() {
         ['ff${foo}test', 'ffbootest', ['foo']],
         ['\$foo', '$foo', []],
         ['${foo}\$foo', 'boo$foo', ['foo']],
+        ['$fö', 'value', ['fö']],
+        ['${fö}', 'value', ['fö']],
         ['${go⤗o}', '${go⤗o}', []],
         ['test$%&test', 'test$%&test', []],
         ['test \\\\$foo test \\\\${goo}', 'test \boo test \fff', ['foo', 'goo']],
@@ -29,6 +31,7 @@ describe("StringInterpolator", function() {
                     'foo' => 'boo',
                     'goo' => 'fff',
                     'test' => 'tset',
+                    'fö' => 'value',
                 ]);
             };
         });
@@ -39,8 +42,8 @@ describe("StringInterpolator", function() {
             });
         }
 
-        foreach (['$fo', '${bo}', 'test $fo test'] as $arg) {
-            it("should throw exception if called with: '{$arg}'", function() use ($arg) {
+        foreach (['$fo' => 'fo', '${bo}' => 'bo', 'test $fo test' => 'fo', '$föo' => 'föo', '${föo}' => 'föo'] as $arg => $name) {
+            it("should throw exception if called with: '{$arg}'", function() use ($arg, $name) {
                 expect(function () use ($arg) {
                     $this->interpolate($arg);
                 })->toThrow(new \VisualCraft\Utils\StringInterpolator\MissingVariableException());

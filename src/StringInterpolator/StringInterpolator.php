@@ -9,7 +9,7 @@ class StringInterpolator
             (?<escape>(\\\\)+)?
             \$
             (\{)?
-                (?<key>\w+)
+                (?<key>[\w\p{L}]+)
             (?(3)\})
         /ux'
     ;
