@@ -6,11 +6,11 @@ class StringInterpolator
 {
     private $regexp =
         '/
-            (?<escape>\\\\)?
+            (?<escape>(\\\\)+)?
             \$
             (\{)?
                 (?<key>\w+)
-            (?(2)\})
+            (?(3)\})
         /ux'
     ;
 
@@ -25,12 +25,15 @@ class StringInterpolator
     public function interpolate($subject, $variables)
     {
         return preg_replace_callback($this->regexp, function ($matches) use ($variables) {
-            if (!empty($matches['escape'])) {
+            $escape = isset($matches['escape']) ? $matches['escape'] : '';
+            $escapeLength = $escape !== '' ? strlen($escape) : 0;
+
+            if ($escapeLength % 2 !== 0) {
                 return substr($matches[0], 1);
             }
 
             if (isset($variables[$matches['key']])) {
-                return $variables[$matches['key']];
+                return substr($escape, 0, $escapeLength - 1) . $variables[$matches['key']];
             }
 
             throw new MissingVariableException(sprintf('Missing variable "%s".', $matches['key']));
@@ -47,7 +50,9 @@ class StringInterpolator
         $names = [];
 
         preg_replace_callback($this->regexp, function ($matches) use (&$names) {
-            if (empty($matches['escape'])) {
+            $escapeLength = isset($matches['escape']) ? strlen($matches['escape']) : 0;
+
+            if ($escapeLength % 2 === 0) {
                 $names[$matches['key']] = true;
             }
         }, $subject);

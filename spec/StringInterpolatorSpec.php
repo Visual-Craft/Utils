@@ -13,6 +13,9 @@ describe("StringInterpolator", function() {
         ['${foo}\$foo', 'boo$foo', ['foo']],
         ['${go⤗o}', '${go⤗o}', []],
         ['test$%&test', 'test$%&test', []],
+        ['test \\\\$foo test \\\\${goo}', 'test \boo test \fff', ['foo', 'goo']],
+        ['\\\\\\$foo', '\\\\$foo', []],
+        ['\\\\\\\\$foo', '\\\\\\boo', ['foo']],
     ];
 
     beforeEach(function () {
