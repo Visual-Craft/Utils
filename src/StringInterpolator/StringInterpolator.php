@@ -36,7 +36,7 @@ class StringInterpolator
                 return substr($escape, 0, $escapeLength - 1) . $variables[$matches['key']];
             }
 
-            throw new MissingVariableException(sprintf('Missing variable "%s".', $matches['key']));
+            throw new MissingVariableException(sprintf("Missing variable '%s'.", $matches['key']));
         }, $subject);
     }
 
