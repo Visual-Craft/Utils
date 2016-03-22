@@ -46,7 +46,7 @@ describe("StringInterpolator", function() {
             it("should throw exception if called with: '{$arg}'", function() use ($arg, $name) {
                 expect(function () use ($arg) {
                     $this->interpolate($arg);
-                })->toThrow(new \VisualCraft\Utils\StringInterpolator\MissingVariableException());
+                })->toThrow(new \VisualCraft\Utils\StringInterpolator\MissingVariableException(sprintf("Missing variable '%s'.", $name)));
             });
         }
     });
