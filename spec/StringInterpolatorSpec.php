@@ -1,6 +1,6 @@
 <?php
 
-describe("StringInterpolator", function() {
+describe('VisualCraft\\Utils\\StringInterpolator\\StringInterpolator', function() {
     $samples = [
         ['test test test', 'test test test', []],
         ['test $foo test', 'test boo test', ['foo']],
@@ -24,7 +24,7 @@ describe("StringInterpolator", function() {
         $this->interpolator = new \VisualCraft\Utils\StringInterpolator\StringInterpolator();
     });
 
-    describe("::interpolate()", function() use ($samples) {
+    describe('->interpolate()', function() use ($samples) {
         beforeEach(function () {
             $this->interpolate = function ($subject) {
                 return $this->interpolator->interpolate($subject, [
@@ -51,7 +51,7 @@ describe("StringInterpolator", function() {
         }
     });
 
-    describe("::getNames()", function() use ($samples) {
+    describe('->getNames()', function() use ($samples) {
         beforeEach(function () {
             $this->getNames = function ($subject) {
                 return $this->interpolator->getNames($subject);
