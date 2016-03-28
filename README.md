@@ -28,6 +28,8 @@ $interpolator->getNames('Demonstration $var1 $var2. An${var3}er example \$var4')
 // )
 ```
 
+### TextBlockManager
+
 ## Unit tests
 ```sh
 composer install --dev
