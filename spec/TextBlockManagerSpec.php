@@ -12,7 +12,7 @@ describe('VisualCraft\\Utils\\TextBlockManager\\TextBlockManager', function() {
         it('should reject marker with invalid characters', function () {
             expect(function () {
                 $this->getManager('>');
-            })->toThrow(new \InvalidArgumentException("Marker should contain only letters, digits and '_', but '>' given."));
+            })->toThrow(new \InvalidArgumentException("Marker should contain only letters, digits, '_', '-' and ':', but '>' given."));
         });
     });
 

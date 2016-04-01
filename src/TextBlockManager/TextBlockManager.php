@@ -25,8 +25,8 @@ class TextBlockManager
      */
     public function __construct($marker, $comment = '#')
     {
-        if (!preg_match('/^[\w\p{L}]+$/u', $marker)) {
-            throw new \InvalidArgumentException(sprintf("Marker should contain only letters, digits and '_', but '%s' given.", $marker));
+        if (!preg_match('/^[\w\p{L}:\-]+$/u', $marker)) {
+            throw new \InvalidArgumentException(sprintf("Marker should contain only letters, digits, '_', '-' and ':', but '%s' given.", $marker));
         }
 
         $this->marker = $marker;
