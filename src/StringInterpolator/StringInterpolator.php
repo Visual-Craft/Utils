@@ -21,6 +21,7 @@ class StringInterpolator
      * @return string|string[]
      *
      * @throws MissingVariableException
+     * @throws \InvalidArgumentException
      */
     public function interpolate($subject, $variablesOrCallable)
     {
