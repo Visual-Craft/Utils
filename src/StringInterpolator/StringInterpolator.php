@@ -39,24 +39,27 @@ class StringInterpolator
         }
 
         return preg_replace_callback($this->regexp, function ($matches) use ($variables, $callable) {
-            $escape = isset($matches['escape']) ? $matches['escape'] : '';
-            $escapeLength = $escape !== '' ? strlen($escape) : 0;
+            if (isset($matches['escape'])) {
+                $escapeLength = strlen($matches['escape']);
 
-            if ($escapeLength % 2 !== 0) {
-                return substr($matches[0], 1);
-            }
-
-            $prefix = substr($escape, 0, $escapeLength - 1);
-
-            if ($callable) {
-                return $prefix . $callable($matches['key']);
-            } else {
-                if (isset($variables[$matches['key']])) {
-                    return $prefix . $variables[$matches['key']];
+                if ($escapeLength % 2 !== 0) {
+                    return substr($matches[0], 1);
                 }
 
+                $prefix = substr($matches['escape'], 0, $escapeLength - 1);
+            } else {
+                $prefix = '';
+            }
+
+            if ($callable !== null) {
+                $value = $callable($matches['key']);
+            } elseif (isset($variables[$matches['key']])) {
+                $value = $variables[$matches['key']];
+            } else {
                 throw new MissingVariableException(sprintf("Missing variable '%s'.", $matches['key']));
             }
+
+            return $prefix . $value;
         }, $subject);
     }
 
@@ -70,9 +73,7 @@ class StringInterpolator
         $names = [];
 
         preg_replace_callback($this->regexp, function ($matches) use (&$names) {
-            $escapeLength = isset($matches['escape']) ? strlen($matches['escape']) : 0;
-
-            if ($escapeLength % 2 === 0) {
+            if (!isset($matches['escape']) || strlen($matches['escape']) % 2 === 0) {
                 $names[$matches['key']] = true;
             }
         }, $subject);
