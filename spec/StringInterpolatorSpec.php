@@ -19,12 +19,21 @@ describe('VisualCraft\\Utils\\StringInterpolator\\StringInterpolator', function(
         ['\\\\\\$foo', '\\\\$foo', '\\\\$foo', []],
         ['\\\\\\\\$foo', '\\\\\\boo', '\\\\\\foo_var', ['foo']],
     ];
+    $should = function () {
+        $args = func_get_args();
+
+        for ($i = 1, $argsCount = count($args); $i < $argsCount; $i++) {
+            $args[$i] = json_encode($args[$i], JSON_UNESCAPED_UNICODE);
+        }
+
+        return 'should ' . call_user_func_array('sprintf', $args);
+    };
 
     beforeEach(function () {
         $this->interpolator = new \VisualCraft\Utils\StringInterpolator\StringInterpolator();
     });
 
-    describe('->interpolate() with array', function() use ($samples) {
+    describe('->interpolate() with array', function() use ($samples, $should) {
         beforeEach(function () {
             $this->interpolate = function ($subject) {
                 return $this->interpolator->interpolate($subject, [
@@ -37,13 +46,13 @@ describe('VisualCraft\\Utils\\StringInterpolator\\StringInterpolator', function(
         });
 
         foreach ($samples as $sample) {
-            it("should return '{$sample[1]}' for '{$sample[0]}'", function() use ($sample) {
+            it($should("return '%s' for '%s'", $sample[1], $sample[0]), function() use ($sample) {
                 expect($this->interpolate($sample[0]))->toBe($sample[1]);
             });
         }
 
         foreach (['$fo' => 'fo', '${bo}' => 'bo', 'test $fo test' => 'fo', '$föo' => 'föo', '${föo}' => 'föo'] as $arg => $name) {
-            it("should throw exception if called with: '{$arg}'", function() use ($arg, $name) {
+            it($should("throw exception if called with: '%s'", $arg), function() use ($arg, $name) {
                 expect(function () use ($arg) {
                     $this->interpolate($arg);
                 })->toThrow(new \VisualCraft\Utils\StringInterpolator\MissingVariableException(sprintf("Missing variable '%s'.", $name)));
@@ -51,7 +60,7 @@ describe('VisualCraft\\Utils\\StringInterpolator\\StringInterpolator', function(
         }
     });
 
-    describe('->interpolate() with callable', function() use ($samples) {
+    describe('->interpolate() with callable', function() use ($samples, $should) {
         beforeEach(function () {
             $this->interpolate = function ($subject) {
                 return $this->interpolator->interpolate($subject, function ($name) {
@@ -61,13 +70,13 @@ describe('VisualCraft\\Utils\\StringInterpolator\\StringInterpolator', function(
         });
 
         foreach ($samples as $sample) {
-            it("should return '{$sample[2]}' for '{$sample[0]}'", function() use ($sample) {
+            it($should("return '%s' for '%s'", $sample[2], $sample[0]), function() use ($sample) {
                 expect($this->interpolate($sample[0]))->toBe($sample[2]);
             });
         }
     });
 
-    describe('->getNames()', function() use ($samples) {
+    describe('->getNames()', function() use ($samples, $should) {
         beforeEach(function () {
             $this->getNames = function ($subject) {
                 return $this->interpolator->getNames($subject);
@@ -75,8 +84,7 @@ describe('VisualCraft\\Utils\\StringInterpolator\\StringInterpolator', function(
         });
 
         foreach ($samples as $sample) {
-            $return = json_encode($sample[3]);
-            it("should return '{$return}' for '{$sample[0]}'", function() use ($sample) {
+            it($should("return '%s' for '%s'", $sample[3], $sample[0]), function() use ($sample) {
                 expect($this->getNames($sample[0]))->toBe($sample[3]);
             });
         }
