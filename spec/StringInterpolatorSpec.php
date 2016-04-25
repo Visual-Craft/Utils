@@ -18,6 +18,7 @@ describe('VisualCraft\\Utils\\StringInterpolator\\StringInterpolator', function(
         ['test \\\\$foo test \\\\${goo}', 'test \boo test \fff', 'test \foo_var test \goo_var', ['foo', 'goo']],
         ['\\\\\\$foo', '\\\\$foo', '\\\\$foo', []],
         ['\\\\\\\\$foo', '\\\\\\boo', '\\\\\\foo_var', ['foo']],
+        [['$foo', 'test', ' $goo'], ['boo', 'test', ' fff'], ['foo_var', 'test', ' goo_var'], ['foo', 'goo']],
     ];
     $should = function () {
         $args = func_get_args();
