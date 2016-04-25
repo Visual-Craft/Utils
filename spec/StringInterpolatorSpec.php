@@ -77,6 +77,14 @@ describe('VisualCraft\\Utils\\StringInterpolator\\StringInterpolator', function(
         }
     });
 
+    describe('->interpolate() with invalid type', function() {
+        it("should throw exception if called with: not supported 2nd argument", function() {
+            expect(function () {
+                $this->interpolator->interpolate('', 'foo');
+            })->toThrow(new \InvalidArgumentException("Argument 'variablesOrCallable' should be array or callable but 'string' is given."));
+        });
+    });
+
     describe('->getNames()', function() use ($samples, $should) {
         beforeEach(function () {
             $this->getNames = function ($subject) {
