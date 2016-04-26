@@ -41,13 +41,11 @@ class StringInterpolator
 
         return preg_replace_callback($this->regexp, function ($matches) use ($variables, $callable) {
             if (isset($matches['escape'])) {
-                $escapeLength = strlen($matches['escape']);
-
-                if ($escapeLength % 2 !== 0) {
+                if (strlen($matches['escape']) % 2 !== 0) {
                     return substr($matches[0], 1);
                 }
 
-                $prefix = substr($matches['escape'], 0, $escapeLength - 1);
+                $prefix = substr($matches['escape'], 1);
             } else {
                 $prefix = '';
             }
