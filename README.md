@@ -30,6 +30,19 @@ $interpolator->getNames('Demonstration $var1 $var2. An${var3}er example \$var4')
 
 ### TextBlockManager
 
+### CliArgsParser
+
+Class used for parsing command line arguments coming from PHP $argv global variable
+
+```php
+$parser = new \VisualCraft\Utils\CliArgsParser\CliArgsParser();
+
+// $self - script name
+// $args - arguments
+// $opts - options
+list($self, $args, $opts) = $parser->parse($argv);
+```
+
 ## Unit tests
 ```sh
 composer install --dev
