@@ -1,7 +1,7 @@
 <?php
 
 describe('VisualCraft\\Utils\\CliArgsParser\\CliArgsParser', function() {
-    $samples = [
+    $this->samples = [
         [[''], ['', [], []]],
         [['/path'], ['/path', [], []]],
         [['/path', 'a', 'b', 'c'], ['/path', ['a', 'b', 'c'], []]],
@@ -17,7 +17,7 @@ describe('VisualCraft\\Utils\\CliArgsParser\\CliArgsParser', function() {
         [['/path', '--foo=a', '--foo=b'], ['/path', [], ['foo' => ['a', 'b']]]],
         [['/path', '--foo=a b c', '--foo=1 2 3'], ['/path', [], ['foo' => ['a b c', '1 2 3']]]],
     ];
-    $should = function () {
+    $this->should = function () {
         $args = func_get_args();
 
         for ($i = 1, $argsCount = count($args); $i < $argsCount; $i++) {
@@ -31,17 +31,10 @@ describe('VisualCraft\\Utils\\CliArgsParser\\CliArgsParser', function() {
         $this->parser = new \VisualCraft\Utils\CliArgsParser\CliArgsParser();
     });
 
-    describe('->parse()', function() use ($samples, $should) {
-        beforeEach(function () {
-            $this->parse = function ($sample) {
-
-                return $this->parser->parse($sample);
-            };
-        });
-
-        foreach ($samples as $sample) {
-            it($should("return '%s' for '%s'", $sample[1], $sample[0]), function() use ($sample) {
-                expect($this->parse($sample[0]))->toBe($sample[1]);
+    describe('->parse()', function() {
+        foreach ($this->samples as list($sample, $expected)) {
+            it($this->should("return '%s' for '%s'", $expected, $sample), function() use ($sample, $expected) {
+                expect($this->parser->parse($sample))->toBe($expected);
             });
         }
     });

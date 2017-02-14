@@ -1,7 +1,7 @@
 <?php
 
 describe('VisualCraft\\Utils\\StringInterpolator\\StringInterpolator', function() {
-    $samples = [
+    $this->samples = [
         ['test test test', 'test test test', 'test test test', []],
         ['test $foo test', 'test boo test', 'test foo_var test', ['foo']],
         [' $foo $goo ', ' boo fff ', ' foo_var goo_var ', ['foo', 'goo']],
@@ -20,7 +20,16 @@ describe('VisualCraft\\Utils\\StringInterpolator\\StringInterpolator', function(
         ['\\\\\\\\$foo', '\\\\\\boo', '\\\\\\foo_var', ['foo']],
         [['$foo', 'test', ' $goo'], ['boo', 'test', ' fff'], ['foo_var', 'test', ' goo_var'], ['foo', 'goo']],
     ];
-    $should = function () {
+    $this->variables = [
+        'foo' => 'boo',
+        'goo' => 'fff',
+        'test' => 'tset',
+        'fö' => 'value',
+    ];
+    $this->interpolationCallable = function ($name) {
+        return $name . '_var';
+    };
+    $this->should = function () {
         $args = func_get_args();
 
         for ($i = 1, $argsCount = count($args); $i < $argsCount; $i++) {
@@ -34,67 +43,45 @@ describe('VisualCraft\\Utils\\StringInterpolator\\StringInterpolator', function(
         $this->interpolator = new \VisualCraft\Utils\StringInterpolator\StringInterpolator();
     });
 
-    describe('->interpolate() with array', function() use ($samples, $should) {
-        beforeEach(function () {
-            $this->interpolate = function ($subject) {
-                return $this->interpolator->interpolate($subject, [
-                    'foo' => 'boo',
-                    'goo' => 'fff',
-                    'test' => 'tset',
-                    'fö' => 'value',
-                ]);
-            };
-        });
 
-        foreach ($samples as $sample) {
-            it($should("return '%s' for '%s'", $sample[1], $sample[0]), function() use ($sample) {
-                expect($this->interpolate($sample[0]))->toBe($sample[1]);
-            });
-        }
-
-        foreach (['$fo' => 'fo', '${bo}' => 'bo', 'test $fo test' => 'fo', '$föo' => 'föo', '${föo}' => 'föo'] as $arg => $name) {
-            it($should("throw exception if called with: '%s'", $arg), function() use ($arg, $name) {
-                expect(function () use ($arg) {
-                    $this->interpolate($arg);
-                })->toThrow(new \VisualCraft\Utils\StringInterpolator\MissingVariableException(sprintf("Missing variable '%s'.", $name)));
-            });
-        }
-    });
-
-    describe('->interpolate() with callable', function() use ($samples, $should) {
-        beforeEach(function () {
-            $this->interpolate = function ($subject) {
-                return $this->interpolator->interpolate($subject, function ($name) {
-                    return $name . '_var';
+    describe('->interpolate()', function() {
+        describe('with variables', function() {
+            foreach ($this->samples as list($sample, $expected)) {
+                it($this->should("return '%s' for '%s'", $expected, $sample), function() use ($sample, $expected) {
+                    expect($this->interpolator->interpolate($sample, $this->variables))->toBe($expected);
                 });
-            };
+            }
+
+            foreach (['$fo' => 'fo', '${bo}' => 'bo', 'test $fo test' => 'fo', '$föo' => 'föo', '${föo}' => 'föo'] as $arg => $name) {
+                it($this->should("throw exception if called with: '%s'", $arg), function() use ($arg, $name) {
+                    expect(function () use ($arg) {
+                        $this->interpolator->interpolate($arg, $this->variables);
+                    })->toThrow(new \VisualCraft\Utils\StringInterpolator\MissingVariableException(sprintf("Missing variable '%s'.", $name)));
+                });
+            }
         });
 
-        foreach ($samples as $sample) {
-            it($should("return '%s' for '%s'", $sample[2], $sample[0]), function() use ($sample) {
-                expect($this->interpolate($sample[0]))->toBe($sample[2]);
+        describe('with callable', function() {
+            foreach ($this->samples as list($sample, $_, $expected)) {
+                it($this->should("return '%s' for '%s'", $expected, $sample), function() use ($sample, $expected) {
+                    expect($this->interpolator->interpolate($sample, $this->interpolationCallable))->toBe($expected);
+                });
+            }
+        });
+
+        describe('with invalid type', function() {
+            it("should throw exception if called with: not supported 2nd argument", function() {
+                expect(function () {
+                    $this->interpolator->interpolate('', 'foo');
+                })->toThrow(new \InvalidArgumentException("Argument 'variablesOrCallable' should be array or callable but 'string' is given."));
             });
-        }
-    });
-
-    describe('->interpolate() with invalid type', function() {
-        it("should throw exception if called with: not supported 2nd argument", function() {
-            expect(function () {
-                $this->interpolator->interpolate('', 'foo');
-            })->toThrow(new \InvalidArgumentException("Argument 'variablesOrCallable' should be array or callable but 'string' is given."));
         });
     });
 
-    describe('->getNames()', function() use ($samples, $should) {
-        beforeEach(function () {
-            $this->getNames = function ($subject) {
-                return $this->interpolator->getNames($subject);
-            };
-        });
-
-        foreach ($samples as $sample) {
-            it($should("return '%s' for '%s'", $sample[3], $sample[0]), function() use ($sample) {
-                expect($this->getNames($sample[0]))->toBe($sample[3]);
+    describe('->getNames()', function() {
+        foreach ($this->samples as list($sample, $_, $_, $expected)) {
+            it($this->should("return '%s' for '%s'", $expected, $sample), function() use ($sample, $expected) {
+                expect($this->interpolator->getNames($sample))->toBe($expected);
             });
         }
     });
