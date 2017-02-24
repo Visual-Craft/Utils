@@ -55,6 +55,10 @@ class StringInterpolator
             } elseif (isset($variables[$matches['key']])) {
                 $value = $variables[$matches['key']];
             } else {
+                $value = null;
+            }
+
+            if ($value === null) {
                 throw new MissingVariableException(sprintf("Missing variable '%s'.", $matches['key']));
             }
 

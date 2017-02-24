@@ -67,6 +67,14 @@ describe('VisualCraft\\Utils\\StringInterpolator\\StringInterpolator', function(
                     expect($this->interpolator->interpolate($sample, $this->interpolationCallable))->toBe($expected);
                 });
             }
+
+            it("should throw exception if callable returns null", function() {
+                expect(function () {
+                    $this->interpolator->interpolate('$foo', function () {
+                        return null;
+                    });
+                })->toThrow(new \VisualCraft\Utils\StringInterpolator\MissingVariableException(sprintf("Missing variable '%s'.", 'foo')));
+            });
         });
 
         describe('with invalid type', function() {
