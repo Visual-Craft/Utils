@@ -9,47 +9,55 @@ describe(StringInterpolator::class, function() {
             'test test test',
             'test test test',
             [],
+            [],
         ],
         [
             'test $foo test',
             'test boo test',
             'test foo_var test',
             ['foo'],
+            ['foo' => 1],
         ],
         [
             ' $foo $goo ',
             ' boo fff ',
             ' foo_var goo_var ',
             ['foo', 'goo'],
+            ['foo' => 1, 'goo' => 1],
         ],
         [
             '$foo $goo $foo',
             'boo fff boo',
             'foo_var goo_var foo_var',
             ['foo', 'goo'],
+            ['foo' => 2, 'goo' => 1],
         ],
         [
             '${foo}',
             'boo',
             'foo_var',
             ['foo'],
+            ['foo' => 1],
         ],
         [
             '${foo}${goo}',
             'boofff',
             'foo_vargoo_var',
             ['foo', 'goo'],
+            ['foo' => 1, 'goo' => 1],
         ],
         [
             'ff${foo}test',
             'ffbootest',
             'fffoo_vartest',
             ['foo'],
+            ['foo' => 1],
         ],
         [
             '\\$foo',
             '$foo',
             '$foo',
+            [],
             [],
         ],
         [
@@ -57,29 +65,34 @@ describe(StringInterpolator::class, function() {
             'boo$foo',
             'foo_var$foo',
             ['foo'],
+            ['foo' => 1],
         ],
         [
             '$fö',
             'value',
             'fö_var',
             ['fö'],
+            ['fö' => 1],
         ],
         [
             '${fö}',
             'value',
             'fö_var',
             ['fö'],
+            ['fö' => 1],
         ],
         [
             '${go⤗o}',
             '${go⤗o}',
             '${go⤗o}',
             [],
+            [],
         ],
         [
             'test$%&test',
             'test$%&test',
             'test$%&test',
+            [],
             [],
         ],
         [
@@ -87,11 +100,13 @@ describe(StringInterpolator::class, function() {
             'test \boo test \fff',
             'test \foo_var test \goo_var',
             ['foo', 'goo'],
+            ['foo' => 1, 'goo' => 1],
         ],
         [
             '\\\\\\$foo',
             '\\\\$foo',
             '\\\\$foo',
+            [],
             [],
         ],
         [
@@ -99,12 +114,21 @@ describe(StringInterpolator::class, function() {
             '\\\\\\boo',
             '\\\\\\foo_var',
             ['foo'],
+            ['foo' => 1],
         ],
         [
             ['$foo', 'test', ' $goo'],
             ['boo', 'test', ' fff'],
             ['foo_var', 'test', ' goo_var'],
             ['foo', 'goo'],
+            ['foo' => 1, 'goo' => 1],
+        ],
+        [
+            '$foo $goo ${foo} \\\\$goo \\$foo test${foo}test',
+            'boo fff boo \\fff $foo testbootest',
+            'foo_var goo_var foo_var \\goo_var $foo testfoo_vartest',
+            ['foo', 'goo'],
+            ['foo' => 3, 'goo' => 2],
         ],
     ];
     $this->variables = [
@@ -177,6 +201,14 @@ describe(StringInterpolator::class, function() {
         foreach ($this->samples as list($sample, $_, $_, $expected)) {
             it($this->should("return '%s' for '%s'", $expected, $sample), function() use ($sample, $expected) {
                 expect($this->interpolator->getNames($sample))->toBe($expected);
+            });
+        }
+    });
+
+    describe('->getCounts()', function() {
+        foreach ($this->samples as list($sample, $_, $_, $_, $expected)) {
+            it($this->should("return '%s' for '%s'", $expected, $sample), function() use ($sample, $expected) {
+                expect($this->interpolator->getCounts($sample))->toBe($expected);
             });
         }
     });

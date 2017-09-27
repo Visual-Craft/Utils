@@ -73,14 +73,28 @@ class StringInterpolator
      */
     public function getNames($subject)
     {
-        $names = [];
+        return array_keys($this->getCounts($subject));
+    }
 
-        preg_replace_callback($this->regexp, function ($matches) use (&$names) {
+    /**
+     * @param string|string[] $subject
+     *
+     * @return array
+     */
+    public function getCounts($subject)
+    {
+        $result = [];
+
+        preg_replace_callback($this->regexp, function ($matches) use (&$result) {
             if (!isset($matches['escape']) || strlen($matches['escape']) % 2 === 0) {
-                $names[$matches['key']] = true;
+                if (!isset($result[$matches['key']])) {
+                    $result[$matches['key']] = 1;
+                } else {
+                    $result[$matches['key']]++;
+                }
             }
         }, $subject);
 
-        return array_keys($names);
+        return $result;
     }
 }
