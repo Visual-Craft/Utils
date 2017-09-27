@@ -1,6 +1,8 @@
 <?php
 
-describe('VisualCraft\\Utils\\StringInterpolator\\StringInterpolator', function() {
+use VisualCraft\Utils\StringInterpolator\StringInterpolator;
+
+describe(StringInterpolator::class, function() {
     $this->samples = [
         [
             'test test test',
@@ -125,7 +127,7 @@ describe('VisualCraft\\Utils\\StringInterpolator\\StringInterpolator', function(
     };
 
     beforeEach(function () {
-        $this->interpolator = new \VisualCraft\Utils\StringInterpolator\StringInterpolator();
+        $this->interpolator = new StringInterpolator();
     });
 
 
