@@ -70,7 +70,7 @@ class TextBlockManager
      */
     private function getRegexp()
     {
-        return sprintf($this->regexpTemplate, preg_quote($this->marker), preg_quote($this->comment, '/'));
+        return sprintf($this->regexpTemplate, preg_quote($this->marker, '/'), preg_quote($this->comment, '/'));
     }
 
     /**
