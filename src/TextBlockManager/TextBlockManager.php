@@ -41,6 +41,11 @@ class TextBlockManager
     public function update($content, $block)
     {
         $block = $this->wrapBlock($block) . "\n";
+
+        if ($content === '') {
+            return $block;
+        }
+
         $count = null;
         $newContent = preg_replace($this->getRegexp(), $block, $content, -1, $count);
 
