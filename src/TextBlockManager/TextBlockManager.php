@@ -49,11 +49,11 @@ class TextBlockManager
         $count = null;
         $newContent = preg_replace($this->getRegexp(), $block, $content, -1, $count);
 
-        if ($count === 0) {
-            $newContent .= "\n" . $block;
+        if ($count !== 0) {
+            return $newContent;
         }
 
-        return $newContent;
+        return $content . "\n" . $block;
     }
 
     /**
