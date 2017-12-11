@@ -53,7 +53,11 @@ class TextBlockManager
             return $newContent;
         }
 
-        return $content . "\n" . $block;
+        if ($content[strlen($content) - 1] !== "\n") {
+            $content .= "\n";
+        }
+
+        return $content . $block;
     }
 
     /**

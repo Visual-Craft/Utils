@@ -30,7 +30,6 @@ describe('VisualCraft\\Utils\\TextBlockManager\\TextBlockManager', function() {
                 '',
                 'block content',
                 <<<EXPECTED
-
 # <marker>
 block content
 # </marker>
@@ -173,7 +172,6 @@ content
 # <other_marker>
 other content
 # </other_marker>
-
 # <marker>
 block content
 # </marker>
@@ -186,7 +184,6 @@ EXPECTED
                 '',
                 'block content',
                 <<<EXPECTED
-
 # <märker>
 block content
 # </märker>
@@ -415,5 +412,21 @@ CONTENT;
             expect($content = $this->manager->remove($content))->toBe($expected);
             expect($content = $this->manager->remove($content))->toBe($expected);
         });
+    });
+
+    it('should keep same content when ->update() + ->remove() called multiple times', function () {
+        $content = <<<CONTENT
+existing
+content
+
+CONTENT;
+        $expected = $content;
+
+        for ($i = 0; $i < 5; $i++) {
+            $content = $this->manager->update($content, 'block');
+            $content = $this->manager->remove($content);
+        }
+
+        expect($content)->toBe($expected);
     });
 });
